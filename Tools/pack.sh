@@ -117,6 +117,8 @@ function pack(){
 	fi
 
 	COPY_APP_PATH=${TARGET_APP_PATH}
+	echo $COPY_APP_PATH
+	echo $TARGET_APP_PATH
 
 	if [[ "${TARGET_APP_PATH}" = "" ]]; then
 		COPY_APP_PATH=${DEMOTARGET_APP_PATH}
