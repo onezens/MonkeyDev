@@ -16,6 +16,8 @@ echo "packing..."
 # environment
 monkeyparser="$MONKEYDEV_PATH/bin/monkeyparser"
 substrate="$MONKEYDEV_PATH/MFrameworks/libsubstitute.dylib"
+#optool
+INSERT_DYLIB="${MONKEYDEV_PATH}/bin/optool"
 
 #exename
 TARGET_APP_PATH=$(find "$SRCROOT/$TARGET_NAME/TargetApp" -type d | grep ".app$" | head -n 1)
@@ -45,8 +47,10 @@ fi
 BUILD_DYLIB_PATH="$BUILT_PRODUCTS_DIR/lib$TARGET_NAME.dylib"
 
 if [[ ! -f "$APP_BINARY_PATH".insert ]]; then
+	echo "mpack.sh start insert dylib"
 	cp -rf "$substrate" "$TARGET_APP_PATH/Contents/MacOS/"
-	"$monkeyparser" install -c load -p "@executable_path/lib$TARGET_NAME.dylib" -t "$APP_BINARY_PATH"
+	"$INSERT_DYLIB" install -c load -p "@executable_path/lib$TARGET_NAME.dylib" -t "$APP_BINARY_PATH"
+	otool -L "$APP_BINARY_PATH"
 	echo "insert" >> "$APP_BINARY_PATH".insert
 fi
 

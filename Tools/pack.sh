@@ -6,6 +6,9 @@ TEMP_PATH="${SRCROOT}/${TARGET_NAME}/tmp"
 # monkeyparser
 MONKEYPARSER="${MONKEYDEV_PATH}/bin/monkeyparser"
 
+#optool
+INSERT_DYLIB="${MONKEYDEV_PATH}/bin/optool"
+
 # create ipa script
 CREATE_IPA="${MONKEYDEV_PATH}/bin/createIPA.command"
 
@@ -52,6 +55,8 @@ function checkApp(){
 	# remove Plugin an Watch
 	rm -rf "${TARGET_APP_PATH}/PlugIns" || true
 	rm -rf "${TARGET_APP_PATH}/Watch" || true
+	rm -rf "${TARGET_APP_PATH}/_CodeSignature" || true
+	rm -rf "${TARGET_APP_PATH}/SC_Info" || true
 
 	/usr/libexec/PlistBuddy -c 'Delete UISupportedDevices' "${TARGET_APP_PATH}/Info.plist" 2>/dev/null
 
@@ -171,7 +176,9 @@ function pack(){
 	APP_BINARY=`plutil -convert xml1 -o - ${BUILD_APP_PATH}/Info.plist | grep -A1 Exec | tail -n1 | cut -f2 -d\> | cut -f1 -d\<`
 
 	if [[ ${MONKEYDEV_INSERT_DYLIB} == "YES" ]];then
-		"$MONKEYPARSER" install -c load -p "@executable_path/Frameworks/lib""${TARGET_NAME}""Dylib.dylib" -t "${BUILD_APP_PATH}/${APP_BINARY}"
+		echo "pack.sh start insert dylib"
+		"$INSERT_DYLIB" install -c load -p "@executable_path/Frameworks/lib""${TARGET_NAME}""Dylib.dylib" -t "${BUILD_APP_PATH}/${APP_BINARY}"
+		otool -L "${BUILD_APP_PATH}/${APP_BINARY}"
 		"$MONKEYPARSER" unrestrict -t "${BUILD_APP_PATH}/${APP_BINARY}"
 
 		chmod +x "${BUILD_APP_PATH}/${APP_BINARY}"
