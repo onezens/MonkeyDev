@@ -9,6 +9,10 @@ MONKEYPARSER="${MONKEYDEV_PATH}/bin/monkeyparser"
 #optool
 INSERT_DYLIB="${MONKEYDEV_PATH}/bin/optool"
 
+# restore-symbol
+RESTORE_SYMBOL="${MONKEYDEV_PATH}/bin/restore-symbol"
+
+
 # create ipa script
 CREATE_IPA="${MONKEYDEV_PATH}/bin/createIPA.command"
 
@@ -61,6 +65,13 @@ function checkApp(){
 	/usr/libexec/PlistBuddy -c 'Delete UISupportedDevices' "${TARGET_APP_PATH}/Info.plist" 2>/dev/null
 
 	VERIFY_RESULT=`export MONKEYDEV_CLASS_DUMP=${MONKEYDEV_CLASS_DUMP};MONKEYDEV_RESTORE_SYMBOL=${MONKEYDEV_RESTORE_SYMBOL};"$MONKEYPARSER" verify -t "${TARGET_APP_PATH}" -o "${SRCROOT}/${TARGET_NAME}"`
+
+	# "$MONKEYPARSER"  "${SRCROOT}/${TARGET_NAME}" -o /pathto/mach_o_with_symbol 
+
+	echo "restoreSymbol"
+	echo "${TARGET_APP_PATH}"
+	echo "${SRCROOT}/${TARGET_NAME}"
+	echo "${VERIFY_RESULT}"
 
 	if [[ $? -eq 16 ]]; then
 	  	panic 1 "${VERIFY_RESULT}"
